@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(6, 300px);
+  grid-auto-rows: 300px;
+  column-gap: 5px;
+  row-gap: 5px;
+}
