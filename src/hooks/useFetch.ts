@@ -9,9 +9,9 @@ export const useFetch = (searchTerm: string) => {
     const url = `https://images-api.nasa.gov/search?q=${searchTerm}`;
     const controller = new AbortController();
 
-    if (!searchTerm) {
-      setData([]);
-    }
+    // if (!searchTerm) {
+    //   setData([]);
+    // }
 
     const fetchData = async () => {
       setLoading(true);
@@ -27,9 +27,10 @@ export const useFetch = (searchTerm: string) => {
       } catch (error: any) {
         if (error.name === "AbortError") {
           console.error("Fetch was aborted.");
-        } else if (searchTerm === "") {
+        } else if (!searchTerm) {
           setLoading(false);
           setError(null);
+          setData([]);
         } else {
           setLoading(false);
           setError("Could not fetch data.");
@@ -46,6 +47,6 @@ export const useFetch = (searchTerm: string) => {
       clearTimeout(timer);
     };
   }, [searchTerm]);
-  console.log(data);
+
   return { data, loading, error };
 };
