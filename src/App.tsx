@@ -1,63 +1,47 @@
+import { useState } from "react";
 import "./App.css";
 
-import { useState, useEffect } from "react";
 import Card from "./Components/Card";
+import { useFetch } from "./hooks/useFetch";
 
 function App() {
-  const [data, setData] = useState([] as any[]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const { data, loading, error } = useFetch(searchTerm);
 
-  const url = "https://images-api.nasa.gov/search?q=moon";
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          throw new Error("Fetching failed");
+  const imageGallery =
+    data &&
+    data.length > 0 &&
+    data
+      .map((item) => {
+        return item.links?.filter((link: { render: string }) => {
+          return link.render === "image";
+        });
+      })
+      .map((img) => {
+        if (img === undefined) {
+          return null;
         }
-        const json = await res.json();
-        setData(json.collection.items);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  // console.log(data && data.length && data[0].links[0].href);
-  console.log(data);
+        return <Card src={img[0]?.href} />;
+      });
   return (
     <div className="App">
-      {loading && <h1>Loading...</h1>}
-      <div className="card-list">
-        {data &&
-          data.length &&
-          data
-            .map((item) => {
-              return item.links?.filter((link: { render: string }) => {
-                return link.render === "image";
-              });
-            })
-            .map((img) => {
-              if (img === undefined) {
-                return null;
-              }
-              return <Card src={img[0]?.href} />;
-            })}
+      <h1>NASA Image search</h1>
+      <div>
+        <label style={{ paddingRight: "1rem" }}>
+          Search for image:
+          <input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </label>
       </div>
+
+      <h3>Found {imageGallery ? imageGallery.length : "0"} images.</h3>
+      {loading && <h1>Loading...</h1>}
+      {error && <h2>{error}</h2>}
+      <div className="card-list">{imageGallery}</div>
     </div>
   );
 }
 
 export default App;
-// data.map((item) =>
-// item.links?.filter((img: { render: string; href: string }) => {
-//   if (img.render === "image") {
-//     console.log("FOUND");
-//   }
-//   return null;
-// })
-// )
