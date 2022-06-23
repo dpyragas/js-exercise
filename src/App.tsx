@@ -30,15 +30,27 @@ function App() {
         <label style={{ paddingRight: "1rem" }}>
           Search for image:
           <input
+            data-testid="search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </label>
       </div>
 
-      <h3>Found {imageGallery ? imageGallery.length : "0"} images.</h3>
+      <button
+        disabled={!searchTerm ? true : false}
+        style={{ marginTop: "1rem" }}
+        id="reset-search-button"
+        onClick={() => setSearchTerm("")}
+      >
+        Reset Search
+      </button>
+
+      <h3 data-testid="found-images-number">
+        Found {imageGallery ? imageGallery.length : "0"} images.
+      </h3>
       {loading && <h1>Loading...</h1>}
-      {error && <h2>{error}</h2>}
+      {error && <h2>ERROR: {error}</h2>}
       <div className="card-list">{imageGallery}</div>
     </div>
   );
